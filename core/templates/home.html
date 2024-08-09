@@ -1,0 +1,57 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+
+{% include 'messages.html' %}
+
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-2">
+            <div class="list-group">
+                <button type="button" class="list-group-item list-group-item-action active">
+                  Category
+                </button>
+                {% for cat in categories %}
+                <a class="list-group-item list-group-item-action" href="{% url 'cat_wise_post' cat.slug %}" class="text-decoration-none text-dark" >{{cat.name}}</a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="col-10 d-flex flex-wrap">
+            {% for post in posts %}
+            <div class="col-sm-4 mb-4 p-2">
+                <div class="card" style="width: 100%;">
+                    <div style="height: 200px; overflow: hidden;">
+                        <img src="{{ post.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <h5 class="card-title">Price: {{ post.price }}$</h5>
+                        <h5 class="card-title">Owner: {{ post.author.get_full_name }}</h5>
+                        
+                        {% if user.is_authenticated and post.author.email != user.email %}
+                        {% if post.is_available %}
+                            {% if user.profile.balance >= post.price %}
+                            <a href="{% url 'adopt_pet' post.id %}" class="btn btn-primary">Adopt</a>
+                            <a href="{% url 'post_details' post.id %}" class="btn btn-success">Read More</a>
+                            {% else %}
+                            <a href="{% url 'adopt_pet' post.id %}" class="btn btn-warning disabled">Insufficient Balance!!</a>
+                            <a href="{% url 'post_details' post.id %}" class="btn btn-success">Read More</a>
+                            {% endif %}
+                        {% else %}
+                        <a href="{% url 'adopt_pet' post.id %}" class="btn btn-warning disabled">Unavailable!!</a>
+                        <a href="{% url 'post_details' post.id %}" class="btn btn-success">Read More</a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+            
+
+    </div>
+</div>
+
+{% endblock %}

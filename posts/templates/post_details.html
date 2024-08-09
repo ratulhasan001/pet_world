@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="container">
+    <div class="card mb-3 m-3 mx-auto" style="max-width: 1000px;">
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="{{ post.image.url }}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">{{ post.title }}</h5>
+            <p class="card-text">{{ post.description }}</p>
+  
+            <h5 class="card-title">Price: {{ post.price }}$</h5>
+            <h3 class="card-title">Owner Details</h3>
+            <h5 class="card-title">{{ post.author.get_full_name }}</h5>
+            <h5 class="card-title">{{ post.author.email }}</h5>
+            <h5 class="card-title">{{ post.author.profile.contact_number }}</h5>
+            <h5 class="card-title">{{ post.author.profile.address }}</h5>
+            
+            {% if user.is_authenticated and post.author.email != user.email %}
+              {% if post.is_available %}
+                {% if user.profile.balance >= post.price %}
+                  <a href="{% url 'adopt_pet' post.id %}" class="btn btn-primary">Adopt</a>
+                {% else %}
+                  <a href="{% url 'adopt_pet' post.id %}" class="btn btn-primary disabled">Insufficient Balance!!</a>
+                {% endif %}
+              {% else %}
+                <a href="{% url 'adopt_pet' post.id %}" class="btn btn-primary disabled">Unavailable!!</a>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<div class="card mb-3 m-3 mx-auto" style="max-width: 500px;">
+    <h5 class="p-3">Total Comments : {{comments | length}}</h5>
+    {% for comment in comments %}
+    <div class="card-body border m-2">
+        <p><b>{{comment.name}}</b> {{comment.created_on}}</p>
+        <p>{{comment.body}}</p>
+    </div>
+    {% endfor %}
+</div>
+{% if can_comment %}
+<div class="card mb-3 m-3 mx-auto" style="max-width: 500px;">
+    <div class="card-body">
+        <form method="post">
+            <h1>Add Comment</h1>
+            {% csrf_token %}
+            {{ comment_form|crispy }}
+            <button class="btn btn-warning">Submit</button>
+        </form>
+    </div>
+</div>
+{% else %}
+<p class="text-center" style="color:red">Only adopters can comment on this post.</p>
+{% endif %}
+{% endblock %}

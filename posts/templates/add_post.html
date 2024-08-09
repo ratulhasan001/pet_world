@@ -1,0 +1,12 @@
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block content %}
+{% for i in messages %}
+<div>
+  <h3 class="text-{{i.tags}}">{{i}}</h3>
+</div>
+{% endfor %}
+<form style="width: 50%; margin: auto" method="post" enctype="multipart/form-data">
+  <h1>Pet Details</h1>
+  {% csrf_token %} {{form | crispy}}
+  <button class="btn btn-outline-warning">Submit</button>
+</form>
+{% endblock %}

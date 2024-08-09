@@ -1,0 +1,90 @@
+{% extends 'base.html' %} 
+{% load crispy_forms_tags %} 
+{% load static %}
+
+{% block static_file %}
+<link rel="stylesheet" href="{% static 'css/profileCard.css' %}">
+{% endblock %}
+  
+{% block content %}
+
+
+<div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+  <div class="card p-4">
+    <div class="image d-flex flex-column justify-content-center align-items-center">
+      <button class="profile-image-btn">
+        <img src="{{ user.profile.image.url }}" height="100" width="100" />
+      </button>
+      <span class="name mt-3">{{ user.get_full_name }}</span>
+      <span class="idd">@{{ user.username }}</span>
+      <span class="idd">{{ user.email }}</span>
+      <span class="idd">{{ user.profile.contact_number }}</span>
+      <span class="idd">{{ user.profile.address }}</span>
+      <span class="idd">Balance: {{ user.profile.balance }}$</span>
+
+      <div class="d-flex mt-2">
+        <a class="btn btn-sm btn-primary" href="{% url 'edit_profile' %}">Edit Your Profile</a>
+      </div>
+      <div class="text mt-3">
+        <span>{{ user.profile.bio }}</span>
+      </div>
+      <div class="px-2 rounded mt-4 date">
+        <span class="join">Joined {{ user.date_joined|date:"F, Y" }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4 style="text-align:center">Adopted: </h4>
+<h4 style="text-align:center">{{data | length}} results found</h4>
+
+<div class="col-10 p-3">
+
+  <div class="d-flex flex-wrap pt-5">
+    {% for post in data %}
+    <div class="col-sm-3">
+      <div class="card m-2">
+        <div style="height: 200px; overflow: hidden;">
+          <img src="{{ post.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" class="card-img-top" alt="...">
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ post.title }}</h5>
+          <h5 class="card-title">Price: {{ post.price }}$</h5>
+          <a href="{% url 'post_details' post.id %}" class="btn btn-success">Read More</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+</div> 
+
+
+
+
+<h4 style="text-align:center">My Adoption Post</h4>
+<h4 style="text-align:center">{{data2 | length}} results found</h4>
+<div class="col-10 m-3 d-flex flex-wrap">
+  {% for post in data2 %}
+  <div class="col-sm-4 mb-4 p-2">
+    <div class="card" style="width: 100%;">
+      <div style="height: 200px; overflow: hidden;">
+        <img src="{{ post.image.url }}" style="width: 100%; height: 100%; object-fit: cover;" class="card-img-top" alt="...">
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <h5 class="card-title">Price: {{ post.price }}$</h5>
+        <h5 class="card-title">Owner: {{ post.author.get_full_name }}</h5>
+        <a href="{% url 'edit_post' post.id %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'delete_post' post.id %}" class="btn btn-danger">Delete</a>
+        <a href="{% url 'post_details' post.id %}" class="btn btn-success">Read More</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+
+
+
+{% endblock %}
